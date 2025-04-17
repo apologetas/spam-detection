@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2 import Binary
 from utils.db_utils import model_to_binary, vectorizer_to_binary
 
-def store_model(conn, model, vectorizer, model_name="spam_detector_v1"):
+def store_model(conn, model, vectorizer):
 
     try:
         cursor = conn.cursor()
@@ -10,8 +10,8 @@ def store_model(conn, model, vectorizer, model_name="spam_detector_v1"):
         vectorizer_binary = Binary(vectorizer_to_binary(vectorizer))
 
         cursor.execute(
-            "INSERT INTO spam_model (model_name, model_weights, vectorizer) VALUES (%s, %s, %s) RETURNING id",
-            (model_name, model_binary, vectorizer_binary)
+            "INSERT INTO spam ( model_weights, vectorizer) VALUES (%s, %s)",
+            (model_binary, vectorizer_binary)
         )
 
         conn.commit()

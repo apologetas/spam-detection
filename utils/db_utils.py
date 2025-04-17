@@ -6,6 +6,7 @@ import os
 
 def model_to_binary(model):
     with tempfile.TemporaryDirectory() as temp_dir:
+
         temp_model_path = os.path.join(temp_dir, "model.h5")
         model.save(temp_model_path)
 

@@ -1,14 +1,11 @@
 from utils.db_utils import binary_to_model, binary_to_vectorizer
 
 
-def get_model(conn, model_name="spam_detector_v1"):
+def get_model(conn):
 
     try:
         cursor = conn.cursor()
-        cursor.execute(
-            "SELECT model_weights, vectorizer FROM spam_model WHERE model_name = %s ORDER BY created_at DESC LIMIT 1",
-            (model_name,)
-        )
+        cursor.execute("SELECT model_weights, vectorizer FROM spam ORDER BY created_at DESC LIMIT 1")
 
         result = cursor.fetchone()
         if result is None:

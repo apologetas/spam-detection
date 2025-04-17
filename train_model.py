@@ -34,8 +34,6 @@ def classify_emails(emails):
 
     try:
         import numpy as np
-
-
         model, vectorizer = db_retrieve.get_model(conn)
 
         if model is None or vectorizer is None:
@@ -74,6 +72,7 @@ def main():
 
 
     df = pd.read_csv("spam_ham_dataset.csv")
+    #Term Frequency - Inverse Document Frequency
     tfidf_vectorizer = TfidfVectorizer(
         max_features=9000,
         min_df=3,
@@ -92,10 +91,9 @@ def main():
     model = Sequential([
         Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
         BatchNormalization(),
-        Dropout(0.3),
+
         Dense(32, activation='relu'),
         BatchNormalization(),
-        Dropout(0.2),
         Dense(1, activation='sigmoid')
     ])
 
@@ -105,23 +103,10 @@ def main():
         metrics=['accuracy']
     )
 
-
-    early_stopping = EarlyStopping(
-        monitor='val_loss',
-        patience=5,
-        restore_best_weights=True
-    )
-
-    reduce_lr = ReduceLROnPlateau(
-        monitor='val_loss',
-        factor=0.2,
-        patience=3,
-        min_lr=0.00001
-    )
-
     class_weights = {
         0: (1 / (y_train == 0).sum()) * (len(y_train) / 2),
         1: (1 / (y_train == 1).sum()) * (len(y_train) / 2)
+
     }
 
     history = model.fit(
@@ -129,7 +114,6 @@ def main():
         epochs=5,
         batch_size=32,
         validation_split=0.2,
-        callbacks=[early_stopping, reduce_lr],
         class_weight=class_weights,
         verbose=1
     )

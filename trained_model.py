@@ -1,35 +1,7 @@
 from db import db_connection
 from db import db_retrieve
+from train_model import classify_emails
 
-def classify_emails(emails):
-
-    conn = db_connection.get_connection()
-
-    try:
-        import numpy as np
-        model, vectorizer = db_retrieve.get_model(conn)
-
-        email_vectors = vectorizer.transform(emails).toarray()
-        predictions = model.predict(email_vectors)
-        print("predictions:", predictions)
-        results = (predictions > 0.5).astype(int)
-
-        classified_emails = []
-        for email, pred, raw_pred in zip(emails, results, predictions):
-            label = "SPAM" if pred[0] == 1 else "HAM"
-            confidence = float(raw_pred[0]) if pred[0] == 1 else 1 - float(raw_pred[0])
-            classified_emails.append({
-                "email": email[:50] + "..." if len(email) > 50 else email,
-                "classification": label,
-                "confidence": f"{confidence:.2%}"
-            })
-
-        return classified_emails
-
-    except Exception as e:
-        return f"Error classifying emails: {str(e)}"
-    finally:
-        conn.close()
 
 
 if __name__ == "__main__":
