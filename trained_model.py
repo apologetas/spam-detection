@@ -1,6 +1,7 @@
 from db import db_connection
 from db import db_retrieve
 from train_model import classify_emails
+from sklearn.metrics import matthews_corrcoef
 
 
 
@@ -15,12 +16,9 @@ if __name__ == "__main__":
         "Subject: Lecture time change information",
     ]
 
-    results = classify_emails(test_emails)
+  #print(matthews_corrcoef(y_true=y_test, y_pred=model.predict(X_test)))
+    y_true = [+1, +1, +1, -1]
+    y_pred = [+1, -1, +1, +1]
 
-    if isinstance(results, list):
-        for result in results:
-            print(f"Email: {result['email']}")
-            print(f"Classification: {result['classification']} (Confidence: {result['confidence']})")
-            print("-" * 60)
-    else:
-        print(results)
+    result =  matthews_corrcoef(y_true, y_pred)
+    print(result)

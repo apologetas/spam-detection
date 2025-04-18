@@ -1,9 +1,8 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report, accuracy_score,matthews_corrcoef,f1_score
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
+from tensorflow.keras.layers import Dense, BatchNormalization
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 
@@ -115,14 +114,26 @@ def main():
         batch_size=32,
         validation_split=0.2,
         class_weight=class_weights,
-        verbose=1
     )
+
+
+
+
 
     y_pred = (model.predict(X_test) > 0.5).astype(int)
     accuracy = accuracy_score(y_test, y_pred)
+
+    mcc = matthews_corrcoef(y_true=y_test, y_pred=y_pred)
+    f1 = f1_score(y_test, y_pred, average="weighted")
+
+    print("____________________________________")
+    print(f"Matthews Correlation Coefficient (MCC): {mcc:.4f}")
     print(f"Model Accuracy: {accuracy * 100:.2f}%")
+    print(f" F1 Score: {f1:.2f}")
+    print("____________________________________")
     print("Classification Report:")
     print(classification_report(y_test, y_pred, target_names=['Ham', 'Spam']))
+
     matrix.get_confusion_matrix(y_test, y_pred)
     graph.plot_training_history(history)
 
